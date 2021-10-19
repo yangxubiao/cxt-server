@@ -1,0 +1,19 @@
+const path = require('path');
+const { encryptToJava } = require('../utils/encrypt');
+
+class HomeCtl {
+  upload(ctx) {
+    const file = ctx.request.files.file;
+    const basename = path.basename(file.path);
+    ctx.body = encryptToJava(JSON.stringify({
+      success: true,
+      errorMas: '',
+      errorCode: '',
+      result: {
+        url: `${ctx.origin}/uploads/${basename}`
+      },
+    }));
+  }
+}
+
+module.exports = new HomeCtl();

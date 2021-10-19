@@ -1,0 +1,32 @@
+{
+  "name": "cxt",
+  "version": "1.0.0",
+  "description": "Bookkeeping is no longer trouble",
+  "main": "index.js",
+  "scripts": {
+    "serve": "cross-env NODE_ENV=development nodemon ./app/index.js",
+    "serve:prod": "cross-env NODE_ENV=production nodemon ./app/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bignumber.js": "^9.0.1",
+    "cross-env": "^7.0.3",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^10.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.3",
+    "koa-body": "^4.2.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-cors": "0.0.16",
+    "koa-json-error": "^3.1.2",
+    "koa-parameter": "^3.0.1",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "mongoose": "^6.0.9",
+    "uninstall": "0.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
