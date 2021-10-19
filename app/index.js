@@ -34,26 +34,26 @@ app.use(koaBody({
 }))
 app.use(cors());
 app.use(parameter(app))
-app.use( async (ctx, next) => {
-  if (ctx.request.url !== '/users/login') {
-    const { authorization = ''} = ctx.request.header;
-    const token = authorization.replace('Bearer ', '');
-    try {
-      const user = jsonwebtoken.verify(token, process.env.JSON_WEB_TOKEN_CODE, {maxAge: '1h'});
-      if (user.freeStatus === '1') {
-        ctx.throw(401, '账号已冻结')
-      }
-      ctx.state.user = user;
-    } catch (err) {
-      ctx.throw(403, err.message)
-    }
-  }
+// app.use( async (ctx, next) => {
+//   if (ctx.request.url !== '/users/login') {
+//     const { authorization = ''} = ctx.request.header;
+//     const token = authorization.replace('Bearer ', '');
+//     try {
+//       const user = jsonwebtoken.verify(token, process.env.JSON_WEB_TOKEN_CODE, {maxAge: '1h'});
+//       if (user.freeStatus === '1') {
+//         ctx.throw(401, '账号已冻结')
+//       }
+//       ctx.state.user = user;
+//     } catch (err) {
+//       ctx.throw(403, err.message)
+//     }
+//   }
 
-  if (ctx?.request?.body?.isEncrypt) {
-    ctx.request.body = decryptToObj(ctx.request.body.jsonObject)
-  }
-  await next()
-})
+//   if (ctx?.request?.body?.isEncrypt) {
+//     ctx.request.body = decryptToObj(ctx.request.body.jsonObject)
+//   }
+//   await next()
+// })
 
 routing(app)
 
