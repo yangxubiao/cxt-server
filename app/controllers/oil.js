@@ -2,12 +2,21 @@ const Oil = require('../models/oil')
 const { encryptToJava } = require('../utils/encrypt');
 const SummarySchema = require('../models/summary');
 const { BigNumber } = require("bignumber.js");
-
+const dayjs  = require('dayjs');
 
 class OilCtl {
 
   async getAllGasRecords(ctx) {
-    const result = await Oil.find();
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const {
+      time,
+      ...rest 
+    } = ctx.request.body;
+    const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
+    const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
+    const result = await Oil.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage);
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -17,10 +26,21 @@ class OilCtl {
   }
 
   async getCurrentCarOwnerGasRecord(ctx) {
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const {
+      time,
+      ...rest 
+    } = ctx.request.body;
+    const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
+    const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
     const result = await Oil.find({
+      ...rest,
       carId: ctx.state.user.carId,
-      carName: ctx.state.user.carName,
-    });
+      carName: ctx.state.user.carName, 
+      createdAt: {$gte: startTime, $lte: endTime} 
+    }).limit(perPage).skip(page * perPage);
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -30,10 +50,30 @@ class OilCtl {
   }
 
   async getCurrentGasSiteRecord(ctx) {
-    const result = await Oil.find({
-      oilName: ctx.state.user.gasName,
-      oilId: ctx.state.user.gasId,
-    });
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const {
+      time,
+      isWhole = false,
+      ...rest 
+    } = ctx.request.body;
+    const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
+    const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
+    let result = [];
+    if (isWhole) {
+      result = await Oil.find({
+        oilName: ctx.state.user.gasName,
+        oilId: ctx.state.user.gasId,
+      })
+    } else {
+      result = await Oil.find({
+        ...rest,
+        oilName: ctx.state.user.gasName,
+        oilId: ctx.state.user.gasId,
+        createdAt: {$gte: startTime, $lte: endTime} 
+      }).limit(perPage).skip(page * perPage);
+    }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -43,9 +83,30 @@ class OilCtl {
   }
 
   async getCurrentLoginGasRecord(ctx) {
-    const result = await Oil.find({
-      userId: ctx.state.user._id,
-    });
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const {
+      time,
+      isWhole = false,
+      ...rest 
+    } = ctx.request.body;
+    const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
+    const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
+    let result = [];
+    if (isWhole) {
+      result = await Oil.find({
+        userId: ctx.state.user._id,
+      })
+    } else {
+      result = await Oil.find({
+        ...rest,
+        carId: ctx.state.user.carId,
+        userId: ctx.state.user._id,
+        carName: ctx.state.user.carName, 
+        createdAt: {$gte: startTime, $lte: endTime} 
+      }).limit(perPage).skip(page * perPage);
+    }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -67,7 +128,7 @@ class OilCtl {
       oilImg: { type: 'string', required: true },
     })
     const findOneSummary = await SummarySchema.findOne({
-      carId: ctx.request.body.carId,
+      userId: ctx.request.body.carId,
     })
     if(!findOneSummary?.carId) {
       ctx.body = encryptToJava(JSON.stringify({

@@ -12,15 +12,15 @@ const {
 router.post('/createOilRecord', createOilRecord)
 
 // 查询当前用户的加油记录
-router.get('/getCurrentLoginGasRecord', getCurrentLoginGasRecord)
+router.post('/getCurrentLoginGasRecord', getCurrentLoginGasRecord)
 
 // 查询当前车队的加油记录
-router.get('/getCurrentCarOwnerGasRecord', getCurrentCarOwnerGasRecord)
+router.post('/getCurrentCarOwnerGasRecord', getCurrentCarOwnerGasRecord)
 
 // 查询所有的加油记录
-router.get('/getAllGasRecords', getAllGasRecords)
+router.post('/getAllGasRecords', getAllGasRecords)
 
 // 获取指定加油点的加油记录
-router.get('/getCurrentGasSiteRecord', getCurrentGasSiteRecord)
+router.post('/getCurrentGasSiteRecord', getCurrentGasSiteRecord)
 
 module.exports = router;
