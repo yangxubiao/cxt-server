@@ -2,11 +2,21 @@ const Recharges = require('../models/recharges')
 const { encryptToJava } = require('../utils/encrypt');
 const SummarySchema = require('../models/summary');
 const { BigNumber } = require("bignumber.js");
+const dayjs  = require('dayjs');
 
 class RechargeCtl {
 
   async findAllRechargesList(ctx) {
-    const result = await Recharges.find(ctx.request.body);
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const {
+      time,
+      ...rest 
+    } = ctx.request.body;
+    const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
+    const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
+    const result = await Recharges.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage);
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -123,11 +133,21 @@ class RechargeCtl {
   }
 
   async getCurrentUserRechargesList(ctx) {
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const {
+      time,
+      ...rest 
+    } = ctx.request.body;
+    const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
+    const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
     const result = await Recharges.find({
-      ...ctx.request.body,
       carName: ctx.state.user.carName,
       carId: ctx.state.user.carId,
-    });
+      ...rest,
+      createdAt: {$gte: startTime, $lte: endTime} 
+    }).limit(perPage).skip(page * perPage);
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',

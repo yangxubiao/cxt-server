@@ -5,7 +5,16 @@ const { encryptToJava } = require('../utils/encrypt');
 class UsersCtl {
 
   async findAllUsersList(ctx) {
-    const result = await Users.find();
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const { isWhole = false,  ...rest } = ctx.request.body;
+    let result = [];
+    if (isWhole) {
+      result = await Users.find(rest);
+    } else {
+      result = await Users.find(rest).limit(perPage).skip(page * perPage);
+    }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -148,7 +157,16 @@ class UsersCtl {
   }
 
   async getCurrentUserAllDrivesList(ctx) {
-    const result = await Users.find({roleNo: '2', carId: ctx.state.user.carId})
+    const { per_page = 10, query_page = 1 } = ctx.query;
+    const page = Math.max(query_page * 1, 1) - 1;
+    const perPage = Math.max(per_page * 1, 1);
+    const { isWhole = false,  ...rest } = ctx.request.body;
+    let result = [];
+    if (isWhole) {
+      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest});
+    } else {
+      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).limit(perPage).skip(page * perPage);
+    }
     if (!result) { ctx.throw(404, '用户不存在'); }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,

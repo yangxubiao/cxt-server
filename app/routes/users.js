@@ -15,7 +15,7 @@ const {
 
 router.post('/createUser', createUser)
 
-router.get('/findAllUsersList', findAllUsersList)
+router.post('/findAllUsersList', findAllUsersList)
 
 router.get('/:id', getUserById)
 
