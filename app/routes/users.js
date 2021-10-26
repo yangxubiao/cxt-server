@@ -11,6 +11,7 @@ const {
   getAllCarsList,
   getCurrentUserAllDrivesList,
   getCurrentUser,
+  getAllOillist,
 } = require('../controllers/users');
 
 router.post('/createUser', createUser)
@@ -30,6 +31,8 @@ router.put('/updataPassword', updatePassword);
 router.put('/updateUser', updateUser);
 
 router.post('/getAllCarslist', getAllCarsList);
+
+router.post('/getAllOillist', getAllOillist);
 
 router.post('/getCurrentUserAllDrivesList', getCurrentUserAllDrivesList);
 

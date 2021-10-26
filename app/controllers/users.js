@@ -156,6 +156,18 @@ class UsersCtl {
     }));
   }
 
+  // 获取所有的加油点
+  async getAllOillist(ctx) {
+    const result = await Users.find({roleNo: '3'})
+    if (!result) { ctx.throw(404, '用户不存在'); }
+    ctx.body = encryptToJava(JSON.stringify({
+      success: true,
+      errorMas: '',
+      errorCode: '',
+      result,
+    }));
+  }
+
   async getCurrentUserAllDrivesList(ctx) {
     const { per_page = 10, query_page = 1 } = ctx.query;
     const page = Math.max(query_page * 1, 1) - 1;
