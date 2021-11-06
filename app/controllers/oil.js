@@ -16,7 +16,7 @@ class OilCtl {
     } = ctx.request.body;
     const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
     const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
-    const result = await Oil.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage);
+    const result = await Oil.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });;
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -40,7 +40,7 @@ class OilCtl {
       carId: ctx.state.user.carId,
       carName: ctx.state.user.carName, 
       createdAt: {$gte: startTime, $lte: endTime} 
-    }).limit(perPage).skip(page * perPage);
+    }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -65,14 +65,14 @@ class OilCtl {
       result = await Oil.find({
         oilName: ctx.state.user.gasName,
         oilId: ctx.state.user.gasId,
-      })
+      }).sort({ createdAt : -1 });
     } else {
       result = await Oil.find({
         ...rest,
         oilName: ctx.state.user.gasName,
         oilId: ctx.state.user.gasId,
         createdAt: {$gte: startTime, $lte: endTime} 
-      }).limit(perPage).skip(page * perPage);
+      }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
@@ -97,7 +97,7 @@ class OilCtl {
     if (isWhole) {
       result = await Oil.find({
         userId: ctx.state.user._id,
-      })
+      }).sort({ createdAt : -1 });
     } else {
       result = await Oil.find({
         ...rest,
@@ -105,7 +105,7 @@ class OilCtl {
         userId: ctx.state.user._id,
         carName: ctx.state.user.carName, 
         createdAt: {$gte: startTime, $lte: endTime} 
-      }).limit(perPage).skip(page * perPage);
+      }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,

@@ -11,9 +11,9 @@ class UsersCtl {
     const { isWhole = false,  ...rest } = ctx.request.body;
     let result = [];
     if (isWhole) {
-      result = await Users.find(rest);
+      result = await Users.find(rest).sort({ createdAt : -1 });
     } else {
-      result = await Users.find(rest).limit(perPage).skip(page * perPage);
+      result = await Users.find(rest).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
@@ -146,7 +146,7 @@ class UsersCtl {
 
   // 获取所有车队的用户
   async getAllCarsList(ctx) {
-    const result = await Users.find({roleNo: '1'})
+    const result = await Users.find({roleNo: '1'}).sort({ createdAt : -1 });
     if (!result) { ctx.throw(404, '用户不存在'); }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
@@ -158,7 +158,7 @@ class UsersCtl {
 
   // 获取所有的加油点
   async getAllOillist(ctx) {
-    const result = await Users.find({roleNo: '3'})
+    const result = await Users.find({roleNo: '3'}).sort({ createdAt : -1 });
     if (!result) { ctx.throw(404, '用户不存在'); }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
@@ -175,9 +175,9 @@ class UsersCtl {
     const { isWhole = false,  ...rest } = ctx.request.body;
     let result = [];
     if (isWhole) {
-      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest});
+      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).sort({ createdAt : -1 });
     } else {
-      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).limit(perPage).skip(page * perPage);
+      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     }
     if (!result) { ctx.throw(404, '用户不存在'); }
     ctx.body = encryptToJava(JSON.stringify({

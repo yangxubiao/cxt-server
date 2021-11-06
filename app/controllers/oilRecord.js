@@ -14,7 +14,7 @@ class OilRecordCtl {
     } = ctx.request.body;
     const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
     const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
-    const result = await OilRecord.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage);
+    const result = await OilRecord.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',

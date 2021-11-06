@@ -4,7 +4,7 @@ const { encryptToJava } = require('../utils/encrypt');
 class CarsCtl {
 
   async findAllCarsList(ctx) {
-    const result = await Cars.find();
+    const result = await Cars.find().sort({ createdAt : -1 });
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',

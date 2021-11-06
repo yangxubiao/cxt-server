@@ -4,7 +4,7 @@ const { encryptToJava } = require('../utils/encrypt');
 class GasesCtl {
 
   async findAllGasesSitesList(ctx) {
-    const result = await Gases.find();
+    const result = await Gases.find().sort({ createdAt : -1 });
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',

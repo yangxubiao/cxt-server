@@ -16,7 +16,7 @@ class RechargeCtl {
     } = ctx.request.body;
     const startTime = dayjs(dayjs(time).format('YYYY-MM')).toDate();
     const endTime = dayjs(dayjs(time).add(1, 'month').format('YYYY-MM')).toDate();
-    const result = await Recharges.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage);
+    const result = await Recharges.find({...rest, createdAt: {$gte: startTime, $lte: endTime} }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
@@ -122,7 +122,7 @@ class RechargeCtl {
   }
 
   async getCurrentLoginederRechargesList(ctx) {
-    const result = await Recharges.find({ nameId: ctx.state.user._id })
+    const result = await Recharges.find({ nameId: ctx.state.user._id }).sort({ createdAt : -1 });
     if (!result) { ctx.throw(404, '充值记录不存在'); }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
@@ -147,7 +147,7 @@ class RechargeCtl {
       carId: ctx.state.user.carId,
       ...rest,
       createdAt: {$gte: startTime, $lte: endTime} 
-    }).limit(perPage).skip(page * perPage);
+    }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
