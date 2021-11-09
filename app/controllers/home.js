@@ -15,7 +15,7 @@ class HomeCtl {
       errorMas: '',
       errorCode: '',
       result: {
-        url: `${ctx.origin}/uploads/${basename}`
+        url: `${process.env.SERVER}/uploads/${basename}`
       },
     }));
   }
