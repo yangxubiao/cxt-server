@@ -128,7 +128,7 @@ class OilCtl {
       oilImg: { type: 'string', required: true },
     })
     const findOneSummary = await SummarySchema.findOne({
-      userId: ctx.request.body.carId,
+      carId: ctx.request.body.carId,
     })
     if(!findOneSummary?.carId) {
       ctx.body = encryptToJava(JSON.stringify({
