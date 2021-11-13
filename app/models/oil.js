@@ -14,7 +14,7 @@ const OilSchema = new Schema({
   oilId: { type: String, required: true },
   oilProxyFee: { type: String, required: true },
   oilLnum: { type: String, required: true },
-  oilImg: { type: String, required: true },
+  oilImg: { type: String, required: false},
 },{timestamps: true})
 
 module.exports = model('Oil', OilSchema)

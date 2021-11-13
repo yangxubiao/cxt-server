@@ -111,8 +111,32 @@ class RechargeCtl {
       settleName: { type: 'string', required: false, allowEmpty: true },
       settleStatus: { type: 'string', required: false , allowEmpty: true},
     })
+    // 找到之前的充值记录
+    const resultOrigin = await Recharges.findById(ctx.request.body._id);
+    if (!resultOrigin) { ctx.throw(404, '充值记录不存在'); }
+
+    // 找到之前的所有充值记录
+    const findOneSummary = await SummarySchema.findOne({
+      leaderId: ctx.request.body.nameId,
+      carId: ctx.request.body.carId,
+    })
+    if (!findOneSummary) { ctx.throw(404, '历史充值记录不存在'); }
+
+    const totalTunnage = (new BigNumber(findOneSummary.totalTunnage).minus(resultOrigin.chargeTunnage).plus(ctx.request.body.chargeTunnage).toFixed(2).toString());
+    const totalLnum = (new BigNumber(findOneSummary.totalLnum).minus(resultOrigin.chargeLnum).plus(ctx.request.body.chargeLnum).toFixed(2).toString());
+    const avaliableTunnage = (new BigNumber(findOneSummary.avaliableTunnage).minus(resultOrigin.chargeTunnage).plus(ctx.request.body.chargeTunnage).toFixed(2).toString());
+    const avaliableLnum = (new BigNumber(findOneSummary.avaliableLnum).minus(resultOrigin.chargeLnum).plus(ctx.request.body.chargeLnum).toFixed(2).toString());
+    await SummarySchema.findOneAndUpdate({
+      leaderId: ctx.request.body.nameId,
+      carId: ctx.request.body.carId
+    },
+      {
+        avaliableLnum,
+        avaliableTunnage,
+        totalTunnage,
+        totalLnum,
+    });
     const result = await Recharges.findByIdAndUpdate(ctx.request.body._id, ctx.request.body);
-    if (!result) { ctx.throw(404, '充值记录不存在'); }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',

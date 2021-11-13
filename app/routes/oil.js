@@ -6,6 +6,8 @@ const {
   getCurrentCarOwnerGasRecord,
   getAllGasRecords,
   getCurrentGasSiteRecord,
+  getOilRecordById,
+  updataOilRecord,
 } = require('../controllers/oil');
 
 const { 
@@ -46,5 +48,12 @@ router.post('/getAllOilRecordRecords', getAllOilRecordRecords)
 
 // 根据 id 获取结清记录
 router.get('/getOilCleanRecordById/:id', getOilCleanRecordById)
+
+
+// 获取指定加油记录
+router.get('/getOilRecordById/:id', getOilRecordById)
+
+// 修改加油记录
+router.put('/updataOilRecord', updataOilRecord)
 
 module.exports = router;

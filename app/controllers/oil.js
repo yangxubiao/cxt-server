@@ -49,6 +49,16 @@ class OilCtl {
     }));
   }
 
+  async getOilRecordById(ctx) {
+    const result = await Oil.findById(ctx.params.id);
+    ctx.body = encryptToJava(JSON.stringify({
+      success: true,
+      errorMas: '',
+      errorCode: '',
+      result,
+    }));
+  }
+
   async getCurrentGasSiteRecord(ctx) {
     const { per_page = 10, query_page = 1 } = ctx.query;
     const page = Math.max(query_page * 1, 1) - 1;
@@ -125,7 +135,7 @@ class OilCtl {
       oilId: { type: 'string', required: true },
       oilProxyFee: { type: 'string', required: true },
       oilLnum: { type: 'string', required: true },
-      oilImg: { type: 'string', required: true },
+      oilImg: { type: 'string', required: false, allowEmpty: true},
     })
     const findOneSummary = await SummarySchema.findOne({
       carId: ctx.request.body.carId,
@@ -166,8 +176,17 @@ class OilCtl {
         result,
       }));
     }
-
-
+  }
+  async updataOilRecord(ctx) {
+    const {_id, ...rest} = ctx.request.body
+    const result = await Oil.findByIdAndUpdate(_id, rest);
+    if (!result) { ctx.throw(404, '加油记录不存在'); }
+    ctx.body = encryptToJava(JSON.stringify({
+      success: true,
+      errorMas: '',
+      errorCode: '',
+      result,
+    }));
   }
 }
 

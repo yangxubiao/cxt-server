@@ -9,6 +9,7 @@ const parameter = require('koa-parameter')
 const routing = require('./routes')
 const jsonwebtoken = require('jsonwebtoken')
 const koaStatic = require('koa-static')
+const Users = require('./models/users')
 
 require('./utils/doenv')
 const { decryptToObj } = require('./utils/encrypt');
@@ -40,7 +41,8 @@ app.use( async (ctx, next) => {
     const token = authorization.replace('Bearer ', '');
     try {
       const user = jsonwebtoken.verify(token, process.env.JSON_WEB_TOKEN_CODE, {maxAge: '1h'});
-      if (user.freeStatus === '1') {
+      const result = await Users.findById(user._id)
+      if (result.freeStatus === '1') {
         ctx.throw(401, '账号已冻结')
       }
       ctx.state.user = user;
