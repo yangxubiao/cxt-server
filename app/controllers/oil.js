@@ -137,9 +137,11 @@ class OilCtl {
       oilLnum: { type: 'string', required: true },
       oilImg: { type: 'string', required: false, allowEmpty: true},
     })
+    // 找到他们车队
     const findOneSummary = await SummarySchema.findOne({
       carId: ctx.request.body.carId,
     })
+    // 没有找到，提示充值
     if(!findOneSummary?.carId) {
       ctx.body = encryptToJava(JSON.stringify({
         success: false,
@@ -149,6 +151,7 @@ class OilCtl {
       }));
       return ;
     } else {
+      // 判断可用升数 - 当前加油升数 是否不足
       if ((new BigNumber(findOneSummary.avaliableLnum).minus(ctx.request.body.oilLnum).toNumber()) < 0) {
         ctx.body = encryptToJava(JSON.stringify({
           success: false,
@@ -158,6 +161,7 @@ class OilCtl {
         }));
         return ;
       }
+      // 否则进行变更
       const avaliableLnum = (new BigNumber(findOneSummary.avaliableLnum).minus(ctx.request.body.oilLnum).toFixed(2).toString());
       const avaliableTunnage = (new BigNumber(avaliableLnum).div(process.env.DEFAULT_L_NUM).toFixed(2).toString());
       await SummarySchema.findOneAndUpdate({
@@ -179,14 +183,52 @@ class OilCtl {
   }
   async updataOilRecord(ctx) {
     const {_id, ...rest} = ctx.request.body
-    const result = await Oil.findByIdAndUpdate(_id, rest);
-    if (!result) { ctx.throw(404, '加油记录不存在'); }
-    ctx.body = encryptToJava(JSON.stringify({
-      success: true,
-      errorMas: '',
-      errorCode: '',
-      result,
-    }));
+    // 找到之前的充值记录
+    const resultOrigin = await Oil.findById(_id);
+    if (!resultOrigin) { ctx.throw(404, '加油记录不存在'); }
+    // 找到他们车队的充值记录
+    const findOneSummary = await SummarySchema.findOne({
+      carId: ctx.request.body.carId,
+    })
+    // 没有找到，提示充值
+    if(!findOneSummary?.carId) {
+      ctx.body = encryptToJava(JSON.stringify({
+        success: false,
+        errorMas: '没有找到车队的充值记录, 请联系管理员充值',
+        errorCode: '',
+        result: null,
+      }));
+      return ;
+    } else {
+      // 判断可用升数 - 当前加油升数 是否不足
+      let avaliableLnum = (new BigNumber(findOneSummary.avaliableLnum).plus(resultOrigin.oilLnum).toFixed(2).toString());
+      const newAvaliableLnum = (new BigNumber(avaliableLnum).minus(ctx.request.body.oilLnum).toNumber());
+      if (newAvaliableLnum < 0) {
+        ctx.body = encryptToJava(JSON.stringify({
+          success: false,
+          errorMas: `请联系管理员充值, 当前账号剩余${avaliableLnum}升`,
+          errorCode: '',
+          result: null,
+        }));
+        return ;
+      }
+      const avaliableTunnage = (new BigNumber(newAvaliableLnum).div(process.env.DEFAULT_L_NUM).toFixed(2).toString());
+      await SummarySchema.findOneAndUpdate({
+        carId: ctx.request.body.carId
+      },
+        {
+          avaliableLnum: newAvaliableLnum,
+          avaliableTunnage,
+      });
+      const result = await Oil.findByIdAndUpdate(_id, rest);
+      if (!result) { ctx.throw(404, '加油记录不存在'); }
+      ctx.body = encryptToJava(JSON.stringify({
+        success: true,
+        errorMas: '',
+        errorCode: '',
+        result,
+      }));
+    }
   }
 }
 
