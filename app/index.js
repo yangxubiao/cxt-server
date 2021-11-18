@@ -40,7 +40,7 @@ app.use( async (ctx, next) => {
     const { authorization = ''} = ctx.request.header;
     const token = authorization.replace('Bearer ', '');
     try {
-      const user = jsonwebtoken.verify(token, process.env.JSON_WEB_TOKEN_CODE, { maxAge: '1h' });
+      const user = jsonwebtoken.verify(token, process.env.JSON_WEB_TOKEN_CODE, { maxAge: '730d' });
       const result = await Users.findById(user._id)
       if (result.freeStatus === '1') {
         ctx.throw(401, '账号已冻结')
