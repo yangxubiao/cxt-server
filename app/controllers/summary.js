@@ -4,12 +4,7 @@ const Summary = require('../models/summary')
 
 class SummaryCtl {
   async queryCarOwnerGasInfo(ctx) {
-    const result = await Summary.findOne({
-      carId: ctx.state.user.carId,
-      carName: ctx.state.user.carName,
-      leaderName: ctx.state.user.name,
-      leaderId: ctx.state.user._id,
-    });
+    const result = await Summary.findOne(ctx.request.body);
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',

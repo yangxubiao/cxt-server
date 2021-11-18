@@ -5,6 +5,6 @@ const {
 } = require('../controllers/summary');
 
 // 查询当前车队的所有加油以及充值总信息
-router.get('/queryCarOwnerGasInfo', queryCarOwnerGasInfo)
+router.post('/queryCarOwnerGasInfo', queryCarOwnerGasInfo)
 
 module.exports = router;
