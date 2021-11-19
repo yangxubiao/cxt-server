@@ -127,6 +127,7 @@ class OilCtl {
   async createOilRecord(ctx) {
     ctx.verifyParams({
       userId: { type: 'string', required: true },
+      phone: { type: 'string', required: true },
       carNo: { type: 'string', required: true },
       carName: { type: 'string', required: true },
       carId: { type: 'string', required: true },
