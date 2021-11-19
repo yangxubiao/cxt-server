@@ -73,7 +73,7 @@ class UsersCtl {
     if (freeStatus === '1') {
       ctx.throw(401, '账号已冻结')
     }
-    const token = jsonwebtoken.sign({ _id, name, freeStatus, carId, gasId, carName, gasName}, process.env.JSON_WEB_TOKEN_CODE, { expiresIn: '730d' })
+    const token = jsonwebtoken.sign({ _id, name, freeStatus, carId, gasId, carName, gasName}, process.env.JSON_WEB_TOKEN_CODE, { expiresIn: '1825 days' })
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
