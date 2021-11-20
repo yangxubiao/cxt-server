@@ -11,6 +11,7 @@ const OilSchema = new Schema({
   carName: { type: String, required: true },
   carId: { type: String, required: true },
   carProxyFee: { type: String, required: true },
+  gasMode: { type: String, required: false }, // 加油模式, 针对驾驶员必填
   oilName: { type: String, required: true },
   oilId: { type: String, required: true },
   oilProxyFee: { type: String, required: true },

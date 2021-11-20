@@ -8,6 +8,7 @@ const {
   getCurrentGasSiteRecord,
   getOilRecordById,
   updataOilRecord,
+  divideOil,
 } = require('../controllers/oil');
 
 const { 
@@ -19,8 +20,10 @@ const {
 } = require('../controllers/oilRecord');
 
 
-// 添加一个加油点
+// 添加一个加油记录
 router.post('/createOilRecord', createOilRecord)
+
+router.post('/divideOil', divideOil)
 
 // 查询当前用户的加油记录
 router.post('/getCurrentLoginGasRecord', getCurrentLoginGasRecord)

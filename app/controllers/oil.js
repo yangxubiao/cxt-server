@@ -133,11 +133,22 @@ class OilCtl {
       carId: { type: 'string', required: true },
       carProxyFee: { type: 'string', required: true },
       oilName: { type: 'string', required: true },
+      gasMode: { type: 'string', required: true },
       oilId: { type: 'string', required: true },
       oilProxyFee: { type: 'string', required: true },
       oilLnum: { type: 'string', required: true },
       oilImg: { type: 'string', required: false, allowEmpty: true},
     })
+    if (ctx.request.body.gasMode === 'divide') {
+      const result = await new Oil(ctx.request.body).save();
+      ctx.body = encryptToJava(JSON.stringify({
+        success: true,
+        errorMas: '',
+        errorCode: '',
+        result,
+      }));
+      return;
+    }
     // 找到他们车队
     const findOneSummary = await SummarySchema.findOne({
       carId: ctx.request.body.carId,
@@ -182,11 +193,69 @@ class OilCtl {
       }));
     }
   }
+
+  async divideOil(ctx) {
+    ctx.verifyParams({
+      carId: { type: 'string', required: true },
+      lnum: { type: 'string', required: true },
+      gasMode: { type: 'string', required: true }, // div 扣油， divide , 分油
+    })
+    // 找到他们车队
+    const findOneSummary = await SummarySchema.findOne({
+      carId: ctx.request.body.carId,
+    })
+    // 没有找到，提示充值
+    if(!findOneSummary?.carId) {
+      ctx.body = encryptToJava(JSON.stringify({
+        success: false,
+        errorMas: '没有找到车队的充值记录, 请联系管理员充值',
+        errorCode: '',
+        result: null,
+      }));
+      return ;
+    } else {
+      // 否则进行变更
+      let avaliableLnum = '';
+      if (ctx.request.body.gasMode === 'divide') {
+        avaliableLnum = (new BigNumber(findOneSummary.avaliableLnum).minus(ctx.request.body.lnum).toFixed(2).toString());
+      } else {
+        avaliableLnum = (new BigNumber(findOneSummary.avaliableLnum).plus(ctx.request.body.lnum).toFixed(2).toString());
+      }
+      const avaliableTunnage = (new BigNumber(avaliableLnum).div(process.env.DEFAULT_L_NUM).toFixed(2).toString());
+      const result = await SummarySchema.findOneAndUpdate({
+        carId: ctx.request.body.carId
+      },
+        {
+          avaliableLnum,
+          avaliableTunnage,
+      });
+
+      ctx.body = encryptToJava(JSON.stringify({
+        success: true,
+        errorMas: '',
+        errorCode: '',
+        result,
+      }));
+    }
+  }
   async updataOilRecord(ctx) {
     const {_id, ...rest} = ctx.request.body
     // 找到之前的充值记录
     const resultOrigin = await Oil.findById(_id);
     if (!resultOrigin) { ctx.throw(404, '加油记录不存在'); }
+
+
+    if (ctx.request.body.gasMode === 'divide') {
+      const result = await Oil.findByIdAndUpdate(_id, rest);
+      if (!result) { ctx.throw(404, '加油记录不存在'); }
+      ctx.body = encryptToJava(JSON.stringify({
+        success: true,
+        errorMas: '',
+        errorCode: '',
+        result,
+      }));
+      return
+    }
     // 找到他们车队的充值记录
     const findOneSummary = await SummarySchema.findOne({
       carId: ctx.request.body.carId,

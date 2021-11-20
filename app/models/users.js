@@ -10,6 +10,9 @@ const usersSchema = new Schema({
   freeStatus: { type: String, required: true },
   password: { type: String, required: true, select: false},
   roleName: { type: String, required: true },
+  gasMode: { type: String, required: false }, // 加油模式, 针对驾驶员必填
+  gasModeName: { type: String, required: false }, // 加油模式, 针对驾驶员必填
+  availableLum: { type: String, required: false }, // 可用升数， 针对驾驶员
   roleNo: { type: String, required: true },
   carName: { type: String, required: false },
   carId: { type: String, required: false },

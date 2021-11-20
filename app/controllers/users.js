@@ -32,6 +32,9 @@ class UsersCtl {
       password: { type: 'string', required: true },
       roleName: { type: 'string', required: true },
       roleNo: { type: 'string', required: true },
+      gasMode: { type: 'string', required: false, allowEmpty: true},
+      gasModeName: { type: 'string', required: false, allowEmpty: true},
+      availableLum: { type: 'string', required: false, allowEmpty: true},
       carName: { type: 'string', required: false, allowEmpty: true},
       carId: { type: 'string', required: false, allowEmpty: true},
       carProxyFee: { type: 'string', required: false, allowEmpty: true},
@@ -114,7 +117,10 @@ class UsersCtl {
       freeStatus: { type: 'string', required: false, allowEmpty: true },
       password: { type: 'string', required: false, allowEmpty: true },
       roleName: { type: 'string', required: false, allowEmpty: true },
-      roleNo: { type: 'string', required: true, allowEmpty: true },
+      roleNo: { type: 'string', required: false, allowEmpty: true },
+      gasMode: { type: 'string', required: false, allowEmpty: true},
+      gasModeName: { type: 'string', required: false, allowEmpty: true},
+      availableLum: { type: 'string', required: false, allowEmpty: true},
       carName: { type: 'string', required: false, allowEmpty: true},
       carId: { type: 'string', required: false, allowEmpty: true},
       carProxyFee: { type: 'string', required: false, allowEmpty: true},
@@ -191,6 +197,23 @@ class UsersCtl {
   async getCurrentUser(ctx) {
     const result = await Users.findById(ctx.state.user._id)
     if (!result) { ctx.throw(404, '用户不存在');}
+    ctx.body = encryptToJava(JSON.stringify({
+      success: true,
+      errorMas: '',
+      errorCode: '',
+      result,
+    }));
+  }
+
+  async updateMany(ctx) {
+    const { data } = ctx.request.body;
+    let result = [];
+    for(let i = 0; i < data.length; i ++) {
+      const {_id, ...rest} = data[i]
+      const user = await Users.findByIdAndUpdate(_id, rest);
+      if (!user) { ctx.throw(404, '用户不存在'); }
+      result.push(user);
+    }
     ctx.body = encryptToJava(JSON.stringify({
       success: true,
       errorMas: '',
