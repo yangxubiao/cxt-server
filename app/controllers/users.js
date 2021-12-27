@@ -178,10 +178,20 @@ class UsersCtl {
     const { per_page = 10, query_page = 1 } = ctx.query;
     const page = Math.max(query_page * 1, 1) - 1;
     const perPage = Math.max(per_page * 1, 1);
-    const { isWhole = false,  ...rest } = ctx.request.body;
+    const { isWhole = false, valueKey,  ...rest } = ctx.request.body;
     let result = [];
     if (isWhole) {
-      result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).sort({ createdAt : -1 });
+      if (valueKey) {
+        var reg = new RegExp(valueKey, "i");
+        var _filter = [
+          //多字段匹配
+          {name: {$regex: reg}},
+          {carNo: {$regex: reg}},
+        ]
+        result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest, $or: _filter}).sort({ createdAt : -1 });
+      } else {
+        result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).sort({ createdAt : -1 });
+      }
     } else {
       result = await Users.find({roleNo: '2', carId: ctx.state.user.carId, ...rest}).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     }
