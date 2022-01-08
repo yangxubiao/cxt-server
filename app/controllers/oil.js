@@ -300,6 +300,13 @@ class OilCtl {
       }));
     }
   }
+  async delete(ctx) {
+    ctx.verifyParams({
+      id: { type: 'string', required: true },
+    })
+    await Oil.findByIdAndRemove(ctx.params.id)
+    ctx.status = 204;
+  }
 }
 
 module.exports = new OilCtl();

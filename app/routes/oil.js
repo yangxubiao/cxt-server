@@ -9,6 +9,7 @@ const {
   getOilRecordById,
   updataOilRecord,
   divideOil,
+  delete: delOilRecord,
 } = require('../controllers/oil');
 
 const { 
@@ -45,6 +46,9 @@ router.put('/updateOilCleanRecord', updateOilCleanRecord)
 
 // 删除加油点结清记录
 router.delete('/delOilCleanRecord/:id', delOilCleanRecord)
+
+// 删除加油记录
+router.delete('/delOilRecord/:id', delOilRecord)
 
 // 获取加油点结清记录
 router.post('/getAllOilRecordRecords', getAllOilRecordRecords)
