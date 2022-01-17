@@ -48,7 +48,7 @@ class OilCtl {
         carName: ctx.state.user.carName, 
         createdAt: {$gte: startTime, $lte: endTime},
         $or: _filter
-      }).sort({ createdAt : -1 });
+      }).limit(perPage).skip(page * perPage).sort({ createdAt : -1 });
     } else {
       result = await Oil.find({
         ...rest,
