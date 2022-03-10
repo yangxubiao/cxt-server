@@ -12,6 +12,16 @@ class SummaryCtl {
       result,
     }));
   }
+
+  async findAllSummaryList(ctx) {
+    const result = await Summary.find().sort({ createdAt : -1 });
+    ctx.body = encryptToJava(JSON.stringify({
+      success: true,
+      errorMas: '',
+      errorCode: '',
+      result,
+    }));
+  }
 }
 
 module.exports = new SummaryCtl();
